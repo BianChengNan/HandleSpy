@@ -24,8 +24,6 @@
 
 #define MAX_FRAME_COUNT		128
 
-CRITICAL_SECTION g_csForStackDataBuffer;
-
 class CFunCallerLogger
 {
 public:
@@ -56,19 +54,21 @@ private:
 #define logger	__noop
 #endif
 
+extern CWitlessCriticalSection g_csForStackDataBuffer;
+
 #define GetCallStackOnNotNull(x, type)	\
 	do \
 	{ \
 		if (NULL != x && INVALID_HANDLE_VALUE != x) \
 		{ \
-			EnterCriticalSection(&g_csForStackDataBuffer); \
+			EnterCriticalSection(g_csForStackDataBuffer); \
 			PCALL_STACK pCallStack = (PCALL_STACK)(CStackStorage::GetInstance()->GetStackDataBufferTail()); \
 			DWORD dwBytesWritten = CCallStack::GetCurrentCallStack(pCallStack, MAX_FRAME_COUNT); \
 			pCallStack->Type = type; \
 			pCallStack->Handle = x; \
 			pCallStack->Handle2 = NULL; \
 			CStackStorage::GetInstance()->IncreaseStackDataLen(dwBytesWritten); \
-			LeaveCriticalSection(&g_csForStackDataBuffer); \
+			LeaveCriticalSection(g_csForStackDataBuffer); \
 		} \
 	} while (0)
 
@@ -78,14 +78,14 @@ private:
 	{ \
 		if (ERROR_SUCCESS == x) \
 		{ \
-			EnterCriticalSection(&g_csForStackDataBuffer); \
+			EnterCriticalSection(g_csForStackDataBuffer); \
 			PCALL_STACK pCallStack = (PCALL_STACK)(CStackStorage::GetInstance()->GetStackDataBufferTail()); \
 			DWORD dwBytesWritten = CCallStack::GetCurrentCallStack(pCallStack, MAX_FRAME_COUNT); \
 			pCallStack->Type = type; \
 			pCallStack->Handle = h; \
 			pCallStack->Handle2 = NULL; \
 			CStackStorage::GetInstance()->IncreaseStackDataLen(dwBytesWritten); \
-			LeaveCriticalSection(&g_csForStackDataBuffer); \
+			LeaveCriticalSection(g_csForStackDataBuffer); \
 		} \
 	} while (0)
 
@@ -94,14 +94,14 @@ private:
 	{ \
 		if (TRUE == x) \
 		{ \
-			EnterCriticalSection(&g_csForStackDataBuffer); \
+			EnterCriticalSection(g_csForStackDataBuffer); \
 			PCALL_STACK pCallStack = (PCALL_STACK)(CStackStorage::GetInstance()->GetStackDataBufferTail()); \
 			DWORD dwBytesWritten = CCallStack::GetCurrentCallStack(pCallStack, MAX_FRAME_COUNT); \
 			pCallStack->Type = type; \
 			pCallStack->Handle = h; \
 			pCallStack->Handle2 = h2; \
 			CStackStorage::GetInstance()->IncreaseStackDataLen(dwBytesWritten); \
-			LeaveCriticalSection(&g_csForStackDataBuffer); \
+			LeaveCriticalSection(g_csForStackDataBuffer); \
 		} \
 	} while (0)
 
@@ -111,14 +111,14 @@ private:
 	{ \
 		if (NT_SUCCESS(x)) \
 		{ \
-			EnterCriticalSection(&g_csForStackDataBuffer); \
+			EnterCriticalSection(g_csForStackDataBuffer); \
 			PCALL_STACK pCallStack = (PCALL_STACK)(CStackStorage::GetInstance()->GetStackDataBufferTail()); \
 			DWORD dwBytesWritten = CCallStack::GetCurrentCallStack(pCallStack, MAX_FRAME_COUNT); \
 			pCallStack->Type = type; \
 			pCallStack->Handle = h; \
 			pCallStack->Handle2 = NULL; \
 			CStackStorage::GetInstance()->IncreaseStackDataLen(dwBytesWritten); \
-			LeaveCriticalSection(&g_csForStackDataBuffer); \
+			LeaveCriticalSection(g_csForStackDataBuffer); \
 		} \
 	} while (0)
 
@@ -2312,17 +2312,6 @@ namespace DetoursorHelper
 		}
 
 		return TRUE;
-	}
-
-
-	VOID InitResourceForFakeFunction()
-	{
-		InitializeCriticalSection(&g_csForStackDataBuffer);
-	}
-
-	VOID CleanResourceForFakeFunction()
-	{
-		DeleteCriticalSection(&g_csForStackDataBuffer);
 	}
 }
 #endif

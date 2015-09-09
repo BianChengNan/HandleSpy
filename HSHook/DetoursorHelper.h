@@ -9,9 +9,5 @@ namespace DetoursorHelper
 	* Add many functions to CDetoursor
 	*/
 	BOOL AddAllFunctionsToDetoursor(CDetoursor *pDetoursor);
-
-	VOID InitResourceForFakeFunction();
-
-	VOID CleanResourceForFakeFunction();
 }
 #endif

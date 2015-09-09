@@ -14,7 +14,6 @@
 #ifdef NT_LAYER_FUNCTION_HOOK
 #include <Windows.h>
 #include <TlHelp32.h>
-#include "WitlessCriticalSection.h"
 #include "NtApiIndex.h"
 #include "detours/detours.h"
 #include "dprintf/DPrintf.h"
@@ -23,8 +22,6 @@
 #include "StackStorage.h"
 
 #define MAX_FRAME_COUNT		128
-
-//CRITICAL_SECTION g_csForStackDataBuffer;
 
 class CFunCallerLogger
 {
@@ -56,9 +53,8 @@ private:
 #define logger	__noop
 #endif
 
-CWitlessCriticalSection g_csForStackDataBuffer;
-#define EnterCriticalSection(x) {x.Enter();}
-#define LeaveCriticalSection(x) {x.Leave();}
+extern CWitlessCriticalSection g_csForStackDataBuffer;
+
 
 #define GetCallStackOnNtSuccess(x, type, h, h2)	\
 	do \

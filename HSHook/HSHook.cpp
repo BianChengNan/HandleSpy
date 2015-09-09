@@ -23,8 +23,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hModule);
 
-		//DetoursorHelper::InitResourceForFakeFunction();
-
 		bRet = (CStackStorage::GetInstance()->InitSharedFileMapping(0) 
 			&& CStackStorage::GetInstance()->Open());
 
@@ -46,7 +44,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			GetModuleFileNameW(NULL, wcsExeFilePathName, _countof(wcsExeFilePathName));
 			
 			CDetoursor::GetInstance()->ClearFunctionTable();
-			//DetoursorHelper::CleanResourceForFakeFunction();
 			
 			CStackStorage::GetInstance()->SetModInfoData(CCallStack::GetModInfoVector());
 			CStackStorage::GetInstance()->SetHeaderData(wcsExeFilePathName);

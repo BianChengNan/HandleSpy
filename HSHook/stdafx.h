@@ -30,5 +30,9 @@
 
 #define INJECTED_MODULE
 
+#include "WitlessCriticalSection.h"
+#define EnterCriticalSection(x) {x.Enter();}
+#define LeaveCriticalSection(x) {x.Leave();}
+
 
 // TODO: reference additional headers your program requires here
